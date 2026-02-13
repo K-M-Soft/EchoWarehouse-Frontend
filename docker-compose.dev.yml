@@ -1,0 +1,27 @@
+# Docker Compose for full stack development
+
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: echo-warehouse-frontend-dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_API_BASE_URL=http://localhost:8000/api
+    command: npm run dev
+    networks:
+      - echo-warehouse-network
+    stdin_open: true
+    tty: true
+
+networks:
+  echo-warehouse-network:
+    driver: bridge

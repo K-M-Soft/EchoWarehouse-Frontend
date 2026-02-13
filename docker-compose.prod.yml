@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  frontend:
+    container_name: echo-warehouse-frontend-prod
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:8000/api}
+    networks:
+      - echo-warehouse-network
+    restart: unless-stopped
+
+networks:
+  echo-warehouse-network:
+    driver: bridge
