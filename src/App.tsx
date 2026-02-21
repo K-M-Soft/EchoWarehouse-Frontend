@@ -1,9 +1,10 @@
-
-export default function App() {
+export const App = () => {
 
   return (
     <div>
-     <p>EchoWarehouse</p>
+      <p>EchoWarehouse</p>
     </div>
-  )
+  );
 }
+
+export default App;
