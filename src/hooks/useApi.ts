@@ -1,25 +1,25 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 
 import baseApiService, { RequestOptions } from "../services/baseApiService";
 import type {
   ApiError,
   ApiResponse,
 } from "../types/baseApiTypes";
+import { useLoadingContext } from "./useLoadingContext";
 
 export const useApi = () => {
-  const [loading, setLoading] = useState(false);
+  const { loading, setLoading } = useLoadingContext();
 
   const request = useCallback(
     async <
-      TResponse extends ApiResponse<TResponse | { error: string }> =
-        ApiResponse<{ error: string }>,
+      TResponse = unknown,
       TBody = unknown,
       TParams = Record<string, unknown>,
     >(
       options: RequestOptions<TBody, TParams>,
-    ): Promise<ApiResponse<TResponse | { error: string }>> => {
+    ): Promise<ApiResponse<TResponse>> => {
       setLoading(true);
-      let response;
+      let response: ApiResponse<TResponse>;
       try {
         response = await baseApiService.request<TResponse, TBody, TParams>(
           options,
@@ -28,7 +28,7 @@ export const useApi = () => {
         const apiError = err as ApiError;
         return {
           isOk: false,
-          data: { error: apiError.details },
+          data: { error: apiError.message } as TResponse,
           message: apiError.message,
         };
       } finally {

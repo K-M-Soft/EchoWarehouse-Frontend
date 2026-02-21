@@ -82,7 +82,7 @@ export const baseApiService = {
     TParams = Record<string, unknown>,
   >(
     options: RequestOptions<TBody, TParams>,
-  ): Promise<ApiResponse<TResponse | { error: string }>> {
+  ): Promise<ApiResponse<TResponse>> {
     const config: AxiosRequestConfig = {
       method: options.method,
       url: options.url,
@@ -109,7 +109,7 @@ export const baseApiService = {
 
       return {
         isOk: false,
-        data: { error: errorData },
+        data: errorData as TResponse,
         message: message,
       };
     }

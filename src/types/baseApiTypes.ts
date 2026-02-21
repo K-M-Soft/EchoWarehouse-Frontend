@@ -4,7 +4,7 @@ export type ApiError = {
   details?: any
 }
 
-export type ApiResponse<T> = {
+export type ApiResponse<T = unknown> = {
   data: T
   message: string
   isOk: boolean
