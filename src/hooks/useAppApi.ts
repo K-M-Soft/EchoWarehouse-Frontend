@@ -9,7 +9,7 @@ export const useAppApi = () => {
   const getBootstrapData = () => {
     return request<AppConfigDTO>({
       method: METHOD_TYPES.GET,
-      url: ROUTE.BOOTSTRAP
+      url: ROUTE.APP_BOOTSTRAP
     });
   };
   return { getBootstrapData };
