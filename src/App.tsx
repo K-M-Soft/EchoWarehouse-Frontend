@@ -1,10 +1,7 @@
-export const App = () => {
+import AppNavigation from "./navigation/AppNavigation";
 
-  return (
-    <div>
-      <p>EchoWarehouse</p>
-    </div>
-  );
-}
+export const App = () => {
+  return <AppNavigation />;
+};
 
 export default App;
