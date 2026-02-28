@@ -34,10 +34,9 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => response,
   (error: AxiosError<ApiError>) => {
-    const status = error.response?.status;
+    const status = error.response?.data?.status;
     const isNetworkError = !error.response || error.message === "Network Error";
     const isTimeout = error.code === "ECONNABORTED";
-
     const fallbackMessage = isTimeout
       ? "UI_Error_Timeout"
       : isNetworkError
