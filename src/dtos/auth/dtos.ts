@@ -1,7 +1,10 @@
+import { ValidationErrorDTO } from "../validation/dtos"
 
 export class LoginRequestDTO {
     username!: string
     password!: string
+
+    validator!: ValidationErrorDTO;
 
     constructor(init?: Partial<LoginRequestDTO>) {
         Object.assign(this, init)
