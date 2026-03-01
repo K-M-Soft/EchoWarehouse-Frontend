@@ -1,15 +1,14 @@
 import { createContext, ReactNode, useState } from "react";
 import { useLoginApi } from "../hooks/useLoginApi";
 import { LoginRequestDTO, LoginResponseDTO } from "../../../dtos/auth/dtos";
-import { useLoadingContext } from "../../../hooks/useLoadingContext";
 import { ErrorDetailDto } from "../../../dtos/validation/dtos";
-import { ApiResponse } from "../../../types/baseApiTypes";
 
 export interface LoginContextType {
   login: () => void;
   loginInfo: LoginRequestDTO;
   onChangeLoginInfo: (field: keyof LoginRequestDTO, value: string) => void;
   validator?: ErrorDetailDto[]; 
+  loading?: boolean;
 }
 
 export const LoginContext = createContext<LoginContextType | undefined>(
@@ -17,8 +16,7 @@ export const LoginContext = createContext<LoginContextType | undefined>(
 );
 
 export const LoginProvider = ({ children }: { children: ReactNode }) => {
-  const loginApi = useLoginApi();
-  const loader = useLoadingContext();
+  const {login, loading} = useLoginApi();
 
   const [loginInfo, setLoginInfo] = useState<LoginRequestDTO>(
     new LoginRequestDTO(),
@@ -27,12 +25,13 @@ export const LoginProvider = ({ children }: { children: ReactNode }) => {
 
   const onChangeLoginInfo = (field: keyof LoginRequestDTO, value: string) => {
     setLoginInfo((prev) => ({ ...prev, [field]: value }));
+    if(validator && validator.length > 0) {
+      setValidator((prev) => prev.filter((error) => error.key !== field));
+    }
   };
 
-  const login = async () => {
-    loader.setLoading(true);
-
-    const response = await loginApi.login(loginInfo);
+  const _login = async () => {
+    const response = await login(loginInfo);
     console.log(response);
 
     if (response.isOk) {
@@ -46,11 +45,10 @@ export const LoginProvider = ({ children }: { children: ReactNode }) => {
       const errors = response.data.details;
       setValidator(errors || [] );
     }
-    loader.setLoading(false);
   };
 
   return (
-    <LoginContext.Provider value={{ login, loginInfo, onChangeLoginInfo, validator }}>
+    <LoginContext.Provider value={{ login: _login, loginInfo, onChangeLoginInfo, validator, loading }}>
       {children}
     </LoginContext.Provider>
   );

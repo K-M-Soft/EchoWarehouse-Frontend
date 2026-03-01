@@ -5,7 +5,7 @@ import { ROUTE } from "../../../routes/route";
 
 
 export const useLoginApi = () => {
-  const { request } = useApi();
+  const { request, loading } = useApi();
 
   const login = (dto: LoginRequestDTO) => {
     return request<LoginResponseDTO>({
@@ -14,5 +14,5 @@ export const useLoginApi = () => {
       data: dto
     });
   };
-  return { login };
+  return { login, loading };
 };

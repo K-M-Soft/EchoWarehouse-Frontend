@@ -9,7 +9,8 @@ import { BsArrowRight } from "react-icons/bs";
 import { useCallback } from "react";
 
 export const Login = () => {
-  const { login, loginInfo, onChangeLoginInfo, validator } = useLoginContext();
+  const { login, loginInfo, onChangeLoginInfo, validator, loading } =
+    useLoginContext();
 
   const handleUsernameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -64,6 +65,7 @@ export const Login = () => {
               <AppInput
                 value={loginInfo?.username}
                 validator={validator}
+                isLoading={loading}
                 validationPropName={"username"}
                 onChange={handleUsernameChange}
                 type="text"
@@ -79,6 +81,7 @@ export const Login = () => {
               <AppInput
                 value={loginInfo?.password}
                 validator={validator}
+                isLoading={loading}
                 validationPropName={"password"}
                 isPassword
                 onChange={handlePasswordChange}
@@ -88,7 +91,7 @@ export const Login = () => {
             </div>
 
             {/* Submit */}
-            <AppButton showLoading onClick={onSignInPress}>
+            <AppButton isLoading={loading} onClick={onSignInPress}>
               {"UI_Login_SignIn"}
               <AppIcon icon={BsArrowRight} className="ml-2" />
             </AppButton>

@@ -3,13 +3,11 @@ import AppIcon from "./AppIcon";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import AppValidator from "./AppValidator";
 import { ErrorDetailDto } from "../../dtos/validation/dtos";
-import { useLoadingContext } from "../../hooks/useLoadingContext";
-
-
 
 interface AppInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   isPassword?: boolean;
   validator?: ErrorDetailDto[];
+  isLoading?: boolean;
   validationPropName?: string;
 }
 
@@ -18,9 +16,9 @@ const AppInputComponent = ({
   isPassword,
   validator,
   validationPropName,
+  isLoading,
   ...inputProps
 }: AppInputProps) => {
-  const loader = useLoadingContext();
   const [showPassword, setShowPassword] = useState(false);
 
   const [errors, setErrors] = useState<ErrorDetailDto[]>(validator || []);
@@ -51,7 +49,7 @@ console.log(validator)
           type={
             isPassword ? (showPassword ? "text" : "password") : inputProps.type
           }
-          disabled={loader.loading || inputProps.disabled}
+          disabled={isLoading || inputProps.disabled}
           className={`w-full h-11 px-4 bg-input border border-border disabled:opacity-40 ${hasError ? "border-red-500" : ""} rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all ${inputProps.className}`}
         />
 
@@ -59,8 +57,8 @@ console.log(validator)
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-40"
-            disabled={loader.loading || inputProps.disabled}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-40 disabled:hover:text-muted-foreground disabled:cursor-not-allowed"
+            disabled={isLoading || inputProps.disabled}
           >
             {showPassword ? (
               <AppIcon className="disabled:opacity-40" size={20} icon={IoMdEyeOff} />
