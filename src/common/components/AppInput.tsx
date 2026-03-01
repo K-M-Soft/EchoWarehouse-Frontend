@@ -1,4 +1,4 @@
-import React, { useState, memo, useEffect } from "react";
+import React, { useState, memo } from "react";
 import AppIcon from "./AppIcon";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import AppValidator from "./AppValidator";
@@ -11,7 +11,6 @@ interface AppInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   validationPropName?: string;
 }
 
-
 const AppInputComponent = ({
   isPassword,
   validator,
@@ -21,31 +20,17 @@ const AppInputComponent = ({
 }: AppInputProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const [errors, setErrors] = useState<ErrorDetailDto[]>(validator || []);
-
-  useEffect(() => {
-    setErrors(validator || []);
-  }, [validator]);
- 
+  // Use validator directly — no need to duplicate into local state
   const hasError =
-    errors && errors.length > 0 &&
-    errors.some(
-      (error) => error.key === validationPropName 
-    );
-console.log(hasError)
-console.log(validator)
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (inputProps.onChange) {
-      inputProps.onChange(e);
-    }
-  };
+    validator &&
+    validator.length > 0 &&
+    validator.some((error) => error.key === validationPropName);
 
   return (
     <>
       <div className="relative">
         <input
           {...inputProps}
-          onChange={onChange}
           type={
             isPassword ? (showPassword ? "text" : "password") : inputProps.type
           }
@@ -68,12 +53,9 @@ console.log(validator)
           </button>
         )}
       </div>
-      
-      {errors && errors.length > 0 && (
-        <AppValidator
-          propName={validationPropName}
-          validator={errors}
-        />
+
+      {validator && validator.length > 0 && (
+        <AppValidator propName={validationPropName} validator={validator} />
       )}
     </>
   );
