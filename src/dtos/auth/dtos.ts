@@ -1,17 +1,19 @@
-import { ValidationErrorDTO } from "../validation/dtos"
+import { BaseResponseDto, ErrorDetailDto } from "../validation/dtos";
 
 export class LoginRequestDTO {
-    username!: string
-    password!: string
-
-    validator!: ValidationErrorDTO;
+    username: string
+    password: string
+    validator: ErrorDetailDto[];
 
     constructor(init?: Partial<LoginRequestDTO>) {
-        Object.assign(this, init)
+        this.username = init?.username || "";
+        this.password = init?.password || "";
+        this.validator = init?.validator?.map(v => new ErrorDetailDto(v)) || [];
+
     }
 }
-
-export class LoginResponseDTO {
+    
+export class LoginResponseDTO extends BaseResponseDto{
     success!: boolean
     accessToken?: string | null
     refreshToken?: string | null
@@ -19,7 +21,12 @@ export class LoginResponseDTO {
     user?: UserDTO | null
 
     constructor(init?: Partial<LoginResponseDTO>) {
-        Object.assign(this, init)
+        super(init);
+        this.success = init?.success || false;
+        this.accessToken = init?.accessToken || null;
+        this.refreshToken = init?.refreshToken || null;
+        this.expiresAt = init?.expiresAt || "";
+        this.user = init?.user || null;
     }
 }
 

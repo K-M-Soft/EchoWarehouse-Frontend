@@ -1,24 +1,53 @@
-import { ValidationErrorDTO } from "../../dtos/validation/dtos";
+import { ErrorDetailDto } from "../../dtos/validation/dtos";
+import { memo } from "react";
 
 interface AppValidatorProps {
-  validator?: ValidationErrorDTO;
+  validator?: ErrorDetailDto[];
   propName?: string;
 }
 
 const AppValidator: React.FC<AppValidatorProps> = ({ validator, propName }) => {
+  const filteredErrors = validator?.filter(
+    (error) => !propName || error.key === propName,
+  );
+
+  if (!filteredErrors || filteredErrors.length === 0) {
+    return null;
+  }
   return (
     <div>
-      {validator &&
-        Object.keys(validator.errors).map((key) => {
-          if (propName && key.toLowerCase() !== propName.toLowerCase()) return null;
-          return (
-            <p key={key} className="text-red-500 text-sm mt-1">
-              {validator.errors[key]}
-            </p>
-          );
-        })}
+      {filteredErrors.map((error) => (
+        <p key={error.key} className="text-red-500 text-sm mt-1">
+          {error.message}
+        </p>
+      ))}
     </div>
   );
 };
 
-export default AppValidator;
+const areEqual = (
+  prev: AppValidatorProps,
+  next: AppValidatorProps
+): boolean => {
+  // If propName changed, re-render
+  if (prev.propName !== next.propName) return false;
+
+  // Compare validator arrays by content
+  const prevLen = prev.validator?.length ?? 0;
+  const nextLen = next.validator?.length ?? 0;
+
+  if (prevLen !== nextLen) return false;
+
+  // Check each error's content
+  for (let i = 0; i < prevLen; i++) {
+    const prevErr = prev.validator![i];
+    const nextErr = next.validator![i];
+    if (prevErr.key !== nextErr.key || prevErr.message !== nextErr.message) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+export default memo(AppValidator, areEqual);

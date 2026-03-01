@@ -1,7 +1,9 @@
+import { ErrorDetailDto } from "../dtos/validation/dtos"
+
 export type ApiError = {
   message: string
   status?: number
-  details?: any
+  details?: ErrorDetailDto[]
 }
 
 export type ApiResponse<T = unknown> = {

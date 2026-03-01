@@ -6,14 +6,26 @@ import AppLogo from "../../common/components/AppLogo";
 import AppCard from "../../common/components/AppCard";
 import AppIcon from "../../common/components/AppIcon";
 import { BsArrowRight } from "react-icons/bs";
-import { LoginRequestDTO } from "../../dtos/auth/dtos";
+import { useCallback } from "react";
 
 export const Login = () => {
-  const { login, loginInfo, onChangeLoginInfo } = useLoginContext();
+  const { login, loginInfo, onChangeLoginInfo, validator } = useLoginContext();
 
-  const onSignInPress = () => {
+  const handleUsernameChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      onChangeLoginInfo("username", e.target.value),
+    [onChangeLoginInfo],
+  );
+
+  const handlePasswordChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      onChangeLoginInfo("password", e.target.value),
+    [onChangeLoginInfo],
+  );
+
+  const onSignInPress = useCallback(() => {
     login();
-  };
+  }, [login]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden">
@@ -49,10 +61,11 @@ export const Login = () => {
               <label className="text-sm font-medium text-muted-foreground">
                 {"UI_Login_Username"}
               </label>
-              <AppInput<LoginRequestDTO>
-                obj={loginInfo}
-                propName={"username"}
-                onChange={(e) => onChangeLoginInfo("username", e.target.value)}
+              <AppInput
+                value={loginInfo?.username}
+                validator={validator}
+                validationPropName={"username"}
+                onChange={handleUsernameChange}
                 type="text"
                 placeholder={"UI_Login_EnterYourUsername"}
               />
@@ -63,11 +76,12 @@ export const Login = () => {
               <label className="text-sm font-medium text-muted-foreground">
                 {"UI_Login_Password"}
               </label>
-              <AppInput<LoginRequestDTO>
-                obj={loginInfo}
-                propName={"password"}
+              <AppInput
+                value={loginInfo?.password}
+                validator={validator}
+                validationPropName={"password"}
                 isPassword
-                onChange={(e) => onChangeLoginInfo("password", e.target.value)}
+                onChange={handlePasswordChange}
                 placeholder={"UI_Login_EnterYourPassword"}
                 className="pr-11"
               />
@@ -76,7 +90,7 @@ export const Login = () => {
             {/* Submit */}
             <AppButton showLoading onClick={onSignInPress}>
               {"UI_Login_SignIn"}
-              <AppIcon icon={BsArrowRight}  className="ml-2" />
+              <AppIcon icon={BsArrowRight} className="ml-2" />
             </AppButton>
           </div>
         </AppCard>

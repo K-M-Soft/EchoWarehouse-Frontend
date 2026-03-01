@@ -1,33 +1,86 @@
-import React, { useState } from "react";
+import React, { useState, memo, useEffect } from "react";
 import AppIcon from "./AppIcon";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
+import AppValidator from "./AppValidator";
+import { ErrorDetailDto } from "../../dtos/validation/dtos";
+import { useLoadingContext } from "../../hooks/useLoadingContext";
+
+
 
 interface AppInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   isPassword?: boolean;
+  validator?: ErrorDetailDto[];
+  validationPropName?: string;
 }
 
-const AppInput: React.FC<AppInputProps> = ({ isPassword, ...inputProps }: AppInputProps) => {
+
+const AppInputComponent = ({
+  isPassword,
+  validator,
+  validationPropName,
+  ...inputProps
+}: AppInputProps) => {
+  const loader = useLoadingContext();
   const [showPassword, setShowPassword] = useState(false);
 
-  return (
-    <div className="relative">
-      <input
-        {...inputProps}
-        type={isPassword ? (showPassword ? "text" : "password") : inputProps.type}
-        className={`w-full h-11 px-4 bg-input border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all ${inputProps.className}`}
-      />
+  const [errors, setErrors] = useState<ErrorDetailDto[]>(validator || []);
 
-      {isPassword && (
-        <button
-          type="button"
-          onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-        >
-          {showPassword ? <AppIcon size={20} icon={IoMdEyeOff} /> : <AppIcon size={20} icon={IoMdEye} />}
-        </button>
+  useEffect(() => {
+    setErrors(validator || []);
+  }, [validator]);
+ 
+  const hasError =
+    errors && errors.length > 0 &&
+    errors.some(
+      (error) => error.key === validationPropName 
+    );
+console.log(hasError)
+console.log(validator)
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (inputProps.onChange) {
+      inputProps.onChange(e);
+    }
+  };
+
+  return (
+    <>
+      <div className="relative">
+        <input
+          {...inputProps}
+          onChange={onChange}
+          type={
+            isPassword ? (showPassword ? "text" : "password") : inputProps.type
+          }
+          disabled={loader.loading || inputProps.disabled}
+          className={`w-full h-11 px-4 bg-input border border-border disabled:opacity-40 ${hasError ? "border-red-500" : ""} rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all ${inputProps.className}`}
+        />
+
+        {isPassword && (
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-40"
+            disabled={loader.loading || inputProps.disabled}
+          >
+            {showPassword ? (
+              <AppIcon className="disabled:opacity-40" size={20} icon={IoMdEyeOff} />
+            ) : (
+              <AppIcon className="disabled:opacity-40" size={20} icon={IoMdEye} />
+            )}
+          </button>
+        )}
+      </div>
+      
+      {errors && errors.length > 0 && (
+        <AppValidator
+          propName={validationPropName}
+          validator={errors}
+        />
       )}
-    </div>
+    </>
   );
 };
+
+const AppInput = memo(AppInputComponent) as typeof AppInputComponent;
 
 export default AppInput;
