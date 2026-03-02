@@ -2,11 +2,12 @@ import { LoginProvider } from "./context/LoginContext";
 import { useLoginContext } from "./hooks/useLoginContext";
 import AppInput from "../../common/components/AppInput";
 import AppButton from "../../common/components/AppButton";
-import AppLogo from "../../common/components/AppLogo";
 import AppCard from "../../common/components/AppCard";
 import AppIcon from "../../common/components/AppIcon";
 import { BsArrowRight } from "react-icons/bs";
-import { memo, useCallback } from "react";
+import { memo, useCallback} from "react";
+import RequiredStar from "../../common/components/RequiredStar";
+import AppLogo from "../../common/components/AppLogo";
 
 // Static background — never re-renders
 const LoginBackground = memo(() => (
@@ -31,7 +32,6 @@ const LoginHeader = memo(() => (
 ));
 
 export const Login = () => {
-    console.log("Login RENDER"); // ← add this
   const { login, loginInfo, onChangeLoginInfo, validator, loading } =
     useLoginContext();
 
@@ -70,6 +70,7 @@ export const Login = () => {
             <div className="space-y-2">
               <label className="text-sm font-medium text-muted-foreground">
                 {"UI_Login_Username"}
+                <RequiredStar />
               </label>
               <AppInput
                 value={loginInfo?.username}
@@ -85,6 +86,7 @@ export const Login = () => {
             <div className="space-y-2">
               <label className="text-sm font-medium text-muted-foreground">
                 {"UI_Login_Password"}
+                <RequiredStar />
               </label>
               <AppInput
                 value={loginInfo?.password}

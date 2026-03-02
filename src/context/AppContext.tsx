@@ -19,7 +19,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
 
   const [appConfig, setAppConfig] = useState<AppConfigDTO | null>(null);
-console.log("AppProvider RENDER"); // ← add this
   useEffect(() => {
     init();
   }, []);

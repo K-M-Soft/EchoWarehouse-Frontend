@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import logo from "../../assets/logo/logo.svg";
 
 interface AppLogoProps {
@@ -20,9 +20,11 @@ const AppLogo: React.FC<AppLogoProps> = ({
       alt={alt}
       width={width}
       height={height}
+      loading="lazy"
+      decoding="async"
       className={className}
     />
   );
 };
 
-export default AppLogo;
+export default memo(AppLogo);

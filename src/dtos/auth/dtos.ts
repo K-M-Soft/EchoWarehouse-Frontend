@@ -1,15 +1,12 @@
-import { BaseResponseDto, ErrorDetailDto } from "../validation/dtos";
+import { BaseResponseDto } from "../validation/dtos";
 
 export class LoginRequestDTO {
     username: string
     password: string
-    validator: ErrorDetailDto[];
 
     constructor(init?: Partial<LoginRequestDTO>) {
         this.username = init?.username || "";
         this.password = init?.password || "";
-        this.validator = init?.validator?.map(v => new ErrorDetailDto(v)) || [];
-
     }
 }
     
