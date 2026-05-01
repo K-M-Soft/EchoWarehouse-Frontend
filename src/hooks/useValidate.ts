@@ -53,7 +53,7 @@ export function useValidate(options: UseValidateOptions = {}) {
     value,
     setValue,
     error: isTouched ? error : null,
-    isValid: !error,
+    isValid: isTouched ? !error : true,
     bind: {
       value,
       onChange: (e: any) => {
@@ -61,6 +61,10 @@ export function useValidate(options: UseValidateOptions = {}) {
         setIsTouched(false);
       },
       onBlur: () => setIsTouched(true),
+      validate: () => {
+        setIsTouched(true);
+        return validateFn(value);
+      },
     },
   };
 }

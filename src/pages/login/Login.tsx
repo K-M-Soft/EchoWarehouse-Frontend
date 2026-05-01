@@ -5,30 +5,54 @@ import AppButton from "../../common/components/AppButton";
 import AppCard from "../../common/components/AppCard";
 import AppIcon from "../../common/components/AppIcon";
 import { BsArrowRight } from "react-icons/bs";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import RequiredStar from "../../common/components/RequiredStar";
 import { LoginHeader } from "./components/LoginHeader";
 import LoginBackground from "./components/LoginBackground";
+import { useValidate } from "../../hooks/useValidate";
 
 export const Login = () => {
   const { login, loginInfo, onChangeLoginInfo, validator, loading } =
     useLoginContext();
 
+  const usernameInputValidation = useValidate({ isRequired: true });
+  const passwordInputValidation = useValidate({ isRequired: true });
+
   const handleUsernameChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) =>
-      onChangeLoginInfo("username", e.target.value),
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChangeLoginInfo("username", e.target.value);
+    },
     [onChangeLoginInfo],
   );
 
   const handlePasswordChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) =>
-      onChangeLoginInfo("password", e.target.value),
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChangeLoginInfo("password", e.target.value);
+    },
     [onChangeLoginInfo],
   );
 
   const onSignInPress = useCallback(() => {
+    const hasErrorUsername = usernameInputValidation.bind.validate();
+    const hasErrorPassword = passwordInputValidation.bind.validate();
+   
+    const hasFrontendError =
+      hasErrorUsername || hasErrorPassword;
+    if (hasFrontendError) {
+      return;
+    }
+
     login();
   }, [login]);
+
+  const hasBackendError = useMemo(() => validator.length > 0, [validator]);
+
+  const hasError = () => {
+    if (hasBackendError) return true;
+    if (!usernameInputValidation.isValid) return true;
+    if (!passwordInputValidation.isValid) return true;
+    return false;
+  };
 
   //TODO: LoginHeaderben a nagy meretu svg-t le kell cserelni png-re, mert rerendernel belassitja a UI-t, mire betolt
   return (
@@ -56,6 +80,7 @@ export const Login = () => {
                 value={loginInfo?.username}
                 validator={validator}
                 isLoading={loading}
+                inputValidation={usernameInputValidation}
                 validationPropName={"username"}
                 onChange={handleUsernameChange}
                 type="text"
@@ -72,6 +97,7 @@ export const Login = () => {
                 value={loginInfo?.password}
                 validator={validator}
                 isLoading={loading}
+                inputValidation={passwordInputValidation}
                 validationPropName={"password"}
                 isPassword
                 onChange={handlePasswordChange}
@@ -80,7 +106,11 @@ export const Login = () => {
               />
             </div>
 
-            <AppButton isLoading={loading} onClick={onSignInPress}>
+            <AppButton
+              isLoading={loading}
+              disabled={hasError()}
+              onClick={onSignInPress}
+            >
               {"UI_Login_SignIn"}
               <AppIcon icon={BsArrowRight} className="ml-2" />
             </AppButton>

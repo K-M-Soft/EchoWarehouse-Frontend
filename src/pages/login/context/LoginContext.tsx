@@ -1,4 +1,10 @@
-import { createContext, ReactNode, useCallback, useMemo, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 import { useLoginApi } from "../hooks/useLoginApi";
 import { LoginRequestDTO, LoginResponseDTO } from "../../../dtos/auth/dtos";
 import { ErrorDetailDto } from "../../../dtos/validation/dtos";
@@ -9,6 +15,7 @@ export interface LoginContextType {
   onChangeLoginInfo: (field: keyof LoginRequestDTO, value: string) => void;
   validator: ErrorDetailDto[];
   loading: boolean;
+  setValidator: React.Dispatch<React.SetStateAction<ErrorDetailDto[]>>;
 }
 
 export const LoginContext = createContext<LoginContextType | undefined>(
@@ -51,7 +58,14 @@ export const LoginProvider = ({ children }: { children: ReactNode }) => {
   }, [apiLogin, loginInfo]);
 
   const contextValue = useMemo(
-    () => ({ login, loginInfo, onChangeLoginInfo, validator, loading }),
+    () => ({
+      login,
+      loginInfo,
+      onChangeLoginInfo,
+      validator,
+      loading,
+      setValidator,
+    }),
     [login, loginInfo, onChangeLoginInfo, validator, loading],
   );
 
