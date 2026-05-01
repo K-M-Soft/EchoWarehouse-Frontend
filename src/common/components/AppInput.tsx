@@ -91,9 +91,7 @@ const AppInputComponent = (
   );
 };
 
-const AppInput = memo(
-  forwardRef<AppInputValidationRef, AppInputProps>(AppInputComponent),
-);
+const AppInput = memo(AppInputComponent);
 
 AppInput.displayName = "AppInput";
 
